@@ -62,6 +62,6 @@ def popular(request):
         'page':       page,
     })
 
-def question_one(request, question_id):
-    question = get_object_or_404(Question, id=question_id)
+def question_one(request,id):
+    question = get_object_or_404(Question, id=id)
     return render(request, 'question.html', {'question':question,})
