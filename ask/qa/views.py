@@ -9,6 +9,8 @@ def test(request):
     return HttpResponse('OK')
 
 
+
+
 def paginate(request, qs):
     try:
         limit = int(request.GET.get('limit', 10))
@@ -29,13 +31,34 @@ def paginate(request, qs):
     return page
 
 
+def question_list_all(request):
+    questions = Question.objects.all()
+    page, paginator = paginate(request, questions)
+    paginator.baseurl = reverse('index') + '/?page='
+
+    return render(request, 'index.html', {
+        'questions':    page.object_list,
+        'page':         page,
+        'paginator':    paginator,
+    })
 
 
 def new(request):
     questions = Question.objects.new()
     page = paginate(request, questions)
     page.baseurl = '/?page='
-    return render(request, 'index.html',{
-    'q'=2,
-   })
+    return render(request, 'index.html', {
+        'questions':  page.object_list,
+        'page':       page,
+    })
+
+
+def popular(request):
+    questions = Question.objects.popular()
+    page = paginate(request, questions)
+    page.baseurl = '/popular/?page='
+    return render(request, 'index.html', {
+        'questions':  page.object_list,
+        'page':       page,
+    })
 
