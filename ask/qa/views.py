@@ -1,9 +1,13 @@
-from django.http import Http404
-from django.shortcuts import render
-from .models import Question
+from django.contrib.auth import login, logout
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
-from django.views.decorators.http import require_GET
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.urls import reverse
+from .models import Question
+
+def test(request):
+    return HttpResponse('OK')
+
 
 def paginate(request, qs):
     try:
@@ -11,25 +15,27 @@ def paginate(request, qs):
     except ValueError:
         limit = 10
     if limit > 100:
-        limit = 10
-    try:
-        page = int(request.GET.get('page', 1))
-    except ValueError:
-        raise Http404
+        limit = 100
+    page = request.GET.get('page', 1)
     paginator = Paginator(qs, limit)
     try:
-        page = paginator.page(page)
+        page = paginator.page(page) # Page
+    except PageNotAnInteger:
+        #page = paginator.page(1)
+        raise Http404
     except EmptyPage:
         page = paginator.page(paginator.num_pages)
+    page.page_range = paginator.page_range
     return page
 
 
-@require_GET
+
+
 def new(request):
     questions = Question.objects.new()
     page = paginate(request, questions)
     page.baseurl = '/?page='
-    return render(request, 'index.html', {
-        'questions':  page.object_list,
-        'page':       page,
-    })
+    return render(request, 'index.html',{
+    'q'=2,
+   })
+
