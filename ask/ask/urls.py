@@ -21,7 +21,7 @@ urlpatterns = [
     path('login/', include('qa.urls')),
     path('signup/', include('qa.urls')),
 
-    path('question/<int:id>',views.question_one),
+    path('question/<int:id>',views.question_one, name='q_spec'),
     path('ask/', include ("qa.urls")),
     path('popular/',views.popular),
     path('new/', include('qa.urls')),
